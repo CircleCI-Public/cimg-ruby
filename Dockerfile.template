@@ -2,7 +2,7 @@
 
 FROM cimg/base:dev
 
-LABEL maintainer="CircleCI <support@circleci.com>"
+LABEL maintainer="CircleCI Community/Partner Engineering <community-partner@circleci.com>"
 
 # Install packages needed for CGO
 RUN apt-get update && apt-get install -y --no-install-recommends \
