@@ -38,8 +38,14 @@ parameters:
 
   version:
     type: enum
-    enum: [""]
+    enum: ["", "2.4.6", "2.5.5", "2.6.3"]
     default: ""
+
+dockerfiles: &dockerfiles
+  <<pipeline.parameters.lang>>/2.4.6/Dockerfile,<<pipeline.parameters.lang>>/2.5.5/Dockerfile,<<pipeline.parameters.lang>>/2.6.3/Dockerfile
+
+node-dockerfiles: &node-dockerfiles
+  node/<<pipeline.parameters.lang>>/2.4.6/Dockerfile,node/<<pipeline.parameters.lang>>/2.5.5/Dockerfile,node/<<pipeline.parameters.lang>>/2.6.3/Dockerfile
 
 jobs:
   trigger-pipeline-builds:
@@ -144,12 +150,6 @@ monthly-tag-jobs-filters: &monthly-tag-jobs-filters
     ignore: /.*/
   tags:
     only: /monthly.*/
-
-dockerfiles: &dockerfiles
-  <<pipeline.parameters.lang>>/v1/Dockerfile,<<pipeline.parameters.lang>>/v2/Dockerfile,
-
-node-dockerfiles: &node-dockerfiles
-  node/<<pipeline.parameters.lang>>/v1/Dockerfile,node/<<pipeline.parameters.lang>>/v2/Dockerfile,
 
 publish-tags: &publish-tags
   latest<<#pipeline.parameters.monthly>>,<<pipeline.parameters.version>>-stable<</pipeline.parameters.monthly>>
