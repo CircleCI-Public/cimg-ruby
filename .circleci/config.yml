@@ -157,6 +157,9 @@ publish-tags: &publish-tags
 node-publish-tags: &node-publish-tags
   <<#pipeline.parameters.monthly>><<pipeline.parameters.version>>-stable-node<</pipeline.parameters.monthly>>
 
+lint-ignore-rules: &lint-ignore-rules
+  DL3003,DL3008,SC2164
+
 workflows:
   monthly-cron-trigger:
     triggers:

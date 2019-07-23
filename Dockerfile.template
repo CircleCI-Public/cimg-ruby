@@ -63,7 +63,7 @@ RUN savedAptMark="$(apt-mark showmanual)"; \
 	make install; \
 	\
 	apt-mark auto '.*' > /dev/null; \
-	apt-mark manual $savedAptMark > /dev/null; \
+	apt-mark manual "$savedAptMark" > /dev/null; \
 	find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec ldd '{}' ';' \
 		| awk '/=>/ { print $(NF-1) }' \
 		| sort -u \
