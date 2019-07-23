@@ -91,6 +91,7 @@ RUN apt-get purge -y --auto-remove \
 # rough smoke test
 	ruby --version; \
 	gem --version; \
+	gem install bundler \
 	bundle --version
 
 # Set default shell for users
