@@ -1,0 +1,5 @@
+command:
+  ruby --version:
+    exit-status: 0
+  gem --version:
+    exit-status: 0

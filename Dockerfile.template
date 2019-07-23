@@ -1,20 +1,96 @@
 # vim:set ft=dockerfile:
+#
+# `FROM` value will be:
+#
+# cimg/base:stable, cimg/base:stable-node for monthly releases
+# cimg/base:edge, cimg/base:edge-node for commits to master or any other branch
 
-FROM cimg/base:dev
+FROM %%BASE_ORG_BASE_IMAGE_BASE_TAG%%
 
 LABEL maintainer="CircleCI Community/Partner Engineering <community-partner@circleci.com>"
 
-# Install packages needed for CGO
-RUN apt-get update && apt-get install -y --no-install-recommends \
-		g++ \
-		libc6-dev \
-	&& rm -rf /var/lib/apt/lists/*
+# Set default shell for building image
+SHELL ["/bin/bash", "-euxo", "pipefail", "-c"]
 
-ENV GO_VERSION=%%GO_VERSION%%
-ENV GO_SHA=%%GO_SHA%%
+ENV DEBIAN_FRONTEND noninteractive
+ENV RUBY_VERSION %%MAIN_VERSION%%
 
-RUN curl -sSL "https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz" | tar -xz -C /usr/local/
+# Install Ruby
+# skip installing gem documentation
+RUN mkdir -p /usr/local/etc; \
+	{ \
+		echo 'install: --no-document'; \
+		echo 'update: --no-document'; \
+	} >> /usr/local/etc/gemrc
 
-ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+# some of ruby's build scripts are written in ruby
+#   we purge system ruby later to make sure our final image uses what we just built
+RUN apt-get update; \
+	apt-get install -y --no-install-recommends \
+		autoconf \
+		bison \
+		dpkg-dev \
+		libgdbm-dev \
+		ruby \
+	; \
+	\
+	RUBY_MAJOR=$(echo $RUBY_VERSION | cut -f1-2 -d"."); \
+	wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"; \
+	\
+	mkdir -p /usr/src/ruby; \
+	tar -xJf ruby.tar.xz -C /usr/src/ruby --strip-components=1; \
+	rm ruby.tar.xz; \
+	\
+	cd /usr/src/ruby; \
+	\
+# hack in "ENABLE_PATH_CHECK" disabling to suppress:
+#   warning: Insecure world writable dir
+	{ \
+		echo '#define ENABLE_PATH_CHECK 0'; \
+		echo; \
+		cat file.c; \
+	} > file.c.new; \
+	mv file.c.new file.c; \
+	\
+	autoconf; \
+	gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)"; \
+	./configure \
+		--build="$gnuArch" \
+		--disable-install-doc \
+		--enable-shared \
+	; \
+	make -j "$(nproc)"; \
+	make install
 
-WORKDIR /root/project
+RUN apt-get purge -y --auto-remove \
+	autoconf \
+	bison \
+	dpkg-dev \
+	libgdbm-dev \
+	ruby \
+	; \
+	rm -rf /var/lib/apt/lists/*; \
+	cd /; \
+	rm -rf /usr/src/ruby || true; \
+	rm -rf /root/.gem/ || true; \
+# verify we have no "ruby" packages installed
+	! dpkg -l | grep -i ruby; \
+	[ "$(command -v ruby)" = '/usr/local/bin/ruby' ]; \
+# rough smoke test
+	ruby --version; \
+	gem --version
+
+# install things globally, for great justice
+# and don't create ".bundle" in all our apps
+ENV GEM_HOME /usr/local/bundle
+ENV BUNDLE_PATH="$GEM_HOME" \
+	BUNDLE_SILENCE_ROOT_WARNING=1 \
+	BUNDLE_APP_CONFIG="$GEM_HOME"
+# path recommendation: https://github.com/bundler/bundler/pull/6469#issuecomment-383235438
+ENV PATH $GEM_HOME/bin:$BUNDLE_PATH/gems/bin:$PATH
+# adjust permissions of a few directories for running "gem install" as an arbitrary user
+RUN mkdir -p "$GEM_HOME" && chmod 777 "$GEM_HOME"
+# (BUNDLE_PATH = GEM_HOME, no need to mkdir/chown both)
+
+# Set default shell for users
+SHELL ["/bin/bash", "-c"]
