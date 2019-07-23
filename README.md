@@ -35,7 +35,7 @@ Stub text.
 Working on CircleCI Docker images.
 
 ### Adding new Ruby versions
-To add a new version of Ruby, add it to the [`versions` array in the `manifests` file](https://github.com/CircleCI-Public/cimg-ruby/blob/master/manifest#L6), as well as to the [`version` pipeline parameter `enum` at the top of the `config.yml` file](https://github.com/CircleCI-Public/cimg-ruby/blob/master/.circleci/config.yml#L38).
+To add a new version of Ruby, add it to the [`versions` array in the `manifests` file](https://github.com/CircleCI-Public/cimg-ruby/blob/master/manifest#L6), as well as to the [`version` pipeline parameter `enum` at the top of the `config.yml` file](https://github.com/CircleCI-Public/cimg-ruby/blob/master/.circleci/config.yml#L41).
 
 ### Commits to non-master branches
 Upon successful commits to non-master branches of this repository, Ruby versions of this image and its Node variant will be pushed to `ccitest/ruby` for any requisite post-deployment testing. Tags there will represent the branch and commit hash that triggered them. For example, a successful commit to a branch of this repository called `dev` would result in the creation of the following image/tag: `ccitest/ruby:<ruby-version>-dev-${CIRCLE_SHA1:0:7}"`, where `${CIRCLE_SHA1:0:7}"` represents the first six characters of that particular commit hash.
