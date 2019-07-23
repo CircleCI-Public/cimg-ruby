@@ -3,5 +3,3 @@ command:
     exit-status: 0
   gem --version:
     exit-status: 0
-  bundle --version:
-    exit-status: 0
