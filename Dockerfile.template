@@ -71,8 +71,8 @@ RUN apt-get purge -y --auto-remove \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
 	cd /; \
-	rm -r /usr/src/ruby; \
-	rm -r /root/.gem/; \
+	rm -rf /usr/src/ruby || true; \
+	rm -rf /root/.gem/ || true; \
 # verify we have no "ruby" packages installed
 	! dpkg -l | grep -i ruby; \
 	[ "$(command -v ruby)" = '/usr/local/bin/ruby' ]; \
