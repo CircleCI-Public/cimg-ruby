@@ -45,7 +45,7 @@ dockerfiles: &dockerfiles
   <<pipeline.parameters.lang>>/2.4.6/Dockerfile,<<pipeline.parameters.lang>>/2.5.5/Dockerfile,<<pipeline.parameters.lang>>/2.6.3/Dockerfile
 
 node-dockerfiles: &node-dockerfiles
-  node/<<pipeline.parameters.lang>>/2.4.6/Dockerfile,node/<<pipeline.parameters.lang>>/2.5.5/Dockerfile,node/<<pipeline.parameters.lang>>/2.6.3/Dockerfile
+  node/2.4.6/Dockerfile,node/2.5.5/Dockerfile,node/2.6.3/Dockerfile
 
 jobs:
   trigger-pipeline-builds:
@@ -127,7 +127,7 @@ jobs:
             done
 
       - save_cache:
-          paths: ~/project<<#parameters.variant>>/node<</parameters.variant>>
+          paths: ~/project<<#parameters.variant>>/node<</parameters.variant>><<^parameters.variant>>/<<pipeline.parameters.lang>><</parameters.variant>>
           key: <<pipeline.parameters.lang>>-dockerfiles<<#parameters.variant>>-node<</parameters.variant>>-{{ .Branch }}-{{ .Revision }}
 
       - persist_to_workspace:
