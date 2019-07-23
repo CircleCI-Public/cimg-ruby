@@ -35,6 +35,7 @@ RUN savedAptMark="$(apt-mark showmanual)"; \
 	; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
+	RUBY_MAJOR=$(echo $RUBY_VERSION | cut -f1-2 -d"."); \
 	wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"; \
 	\
 	mkdir -p /usr/src/ruby; \
