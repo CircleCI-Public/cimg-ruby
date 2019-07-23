@@ -33,7 +33,6 @@ RUN apt-get update; \
 		libgdbm-dev \
 		ruby \
 	; \
-	rm -rf /var/lib/apt/lists/*; \
 	\
 	RUBY_MAJOR=$(echo $RUBY_VERSION | cut -f1-2 -d"."); \
 	wget -O ruby.tar.xz "https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR%-rc}/ruby-$RUBY_VERSION.tar.xz"; \
@@ -69,7 +68,8 @@ RUN apt-get purge -y --auto-remove \
 	dpkg-dev \
 	libgdbm-dev \
 	ruby \
-	\
+	; \
+	rm -rf /var/lib/apt/lists/*; \
 	cd /; \
 	rm -r /usr/src/ruby; \
 	rm -r /root/.gem/; \
