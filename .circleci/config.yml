@@ -192,6 +192,7 @@ workflows:
           checkout: false
           attach-workspace: true
           workspace-root: ~/
+          ignore-rules: *lint-ignore-rules
           dockerfiles: *dockerfiles
           filters: *monthly-tag-jobs-filters
           requires: [prepare-dockerfiles-<<pipeline.parameters.lang>>-stable]
@@ -202,6 +203,7 @@ workflows:
           checkout: false
           attach-workspace: true
           workspace-root: ~/
+          ignore-rules: *lint-ignore-rules
           dockerfiles: *node-dockerfiles
           filters: *monthly-tag-jobs-filters
           requires: [prepare-dockerfiles-<<pipeline.parameters.lang>>-stable-node]
@@ -239,6 +241,7 @@ workflows:
           checkout: false
           attach-workspace: true
           workspace-root: ~/
+          ignore-rules: *lint-ignore-rules
           dockerfiles: *dockerfiles
           filters: *dev-filters
           requires: [prepare-dockerfiles-<<pipeline.parameters.lang>>-ccitest]
@@ -265,6 +268,7 @@ workflows:
           checkout: false
           attach-workspace: true
           workspace-root: ~/
+          ignore-rules: *lint-ignore-rules
           dockerfiles: *node-dockerfiles
           filters: *dev-filters
           requires: [prepare-dockerfiles-<<pipeline.parameters.lang>>-ccitest-node]
@@ -290,6 +294,7 @@ workflows:
           checkout: false
           attach-workspace: true
           workspace-root: ~/
+          ignore-rules: *lint-ignore-rules
           dockerfiles: *dockerfiles
           filters: *master-filters
           requires: [prepare-dockerfiles-<<pipeline.parameters.lang>>-edge]
@@ -318,6 +323,7 @@ workflows:
           checkout: false
           attach-workspace: true
           workspace-root: ~/
+          ignore-rules: *lint-ignore-rules
           dockerfiles: *node-dockerfiles
           filters: *master-filters
           requires: [prepare-dockerfiles-<<pipeline.parameters.lang>>-edge-node]
