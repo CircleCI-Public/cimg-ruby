@@ -1,28 +1,363 @@
 version: 2.1
 
-workflows:
-  main:
-    jobs:
-      - build:
-          context: orb-publishing
+orbs:
+  bt: circleci/build-tools@2.6.3
+  cimg: cci-dev/cimg@0.0.24
+  docker: circleci/docker@0.5.13
+
+parameters:
+  lang:
+    type: string
+    default: ruby
+
+  commit:
+    type: boolean
+    default: true
+
+  build:
+    type: boolean
+    default: false
+
+  build-node:
+    type: boolean
+    default: false
+
+  monthly:
+    type: boolean
+    default: false
+
+  image-tag:
+    type: string
+    default: "${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}"
+    # edge, stable
+
+  target:
+    type: enum
+    enum: [ccitest, cimg]
+    default: ccitest
+
+  version:
+    type: enum
+    enum: [""]
+    default: ""
 
 jobs:
-  build:
-    docker:
-      - image: cibuilds/docker:18.09
+  trigger-pipeline-builds:
+    executor: cimg/base
+    parameters:
+      node:
+        type: boolean
+        default: false
+      image-tag:
+        type: string
+        default: "${CIRCLE_BRANCH}-${CIRCLE_SHA1:0:7}"
+        # edge, stable
+      target:
+        type: enum
+        enum: [ccitest, cimg]
+        default: ccitest
+      monthly:
+        type: boolean
+        default: false
+
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
-      # temp until a custom docker image with Bash is built
-      - run: apk add --update --no-cache bash
       - run:
-          name: "Build Docker Images"
-          command: ./build-images.sh
-      - deploy:
-          name: "Publish Docker Images (master branch only)"
+          name: Trigger image build/test/deploy
           command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
-              docker push circleciimages/ruby
-            fi
+            source ./manifest
+
+            for version in "${versions[@]}"
+            do
+              curl -u ${CIRCLE_TOKEN}: -X POST --header "Content-Type: application/json" -d "{
+                \"branch\": \"${CIRCLE_BRANCH:-master}\",
+                \"parameters\": {
+                  \"commit\": false,
+                  \"build<<#parameters.node>>-node<</parameters.node>>\": true,
+                  \"version\": \"${version}\",
+                  \"image-tag\": \"<<parameters.image-tag>>\",
+                  \"target\": \"<<parameters.target>>\",
+                  \"monthly\": <<parameters.monthly>>
+                }
+              }" https://circleci.com/api/v2/project/gh/CircleCI-Public/cimg-<<pipeline.parameters.lang>>/pipeline
+            done
+
+  prepare-dockerfiles:
+    executor: cimg/default
+    parameters:
+      base-org-image-tag:
+        type: string
+      step-name:
+        type: string
+      variant:
+        type: enum
+        enum: ["", node]
+        default: ""
+
+    steps:
+      - checkout
+      - run:
+          name: <<parameters.step-name>>
+          command: |
+            BASE=<<parameters.base-org-image-tag>>
+
+            source ./manifest
+
+            <<#parameters.variant>>mkdir -p <<parameters.variant>>
+            cd <<parameters.variant>><</parameters.variant>>
+            <<^parameters.variant>>mkdir -p <<pipeline.parameters.lang>>
+            cd <<pipeline.parameters.lang>><</parameters.variant>>
+
+            for version in "${versions[@]}"
+            do
+              echo "$version"
+
+              mkdir -p "$version"
+
+              sed -r -e 's!%%BASE_ORG_BASE_IMAGE_BASE_TAG%%!'"$BASE"'!g' \
+                ~/project/Dockerfile.template > "$version/Dockerfile"
+
+              perl -i -pe 's!%%MAIN_VERSION%%!'"$version"'!g' "$version/Dockerfile"
+            done
+
+      - save_cache:
+          paths: ~/project<<#parameters.variant>>/node<</parameters.variant>>
+          key: <<pipeline.parameters.lang>>-dockerfiles<<#parameters.variant>>-node<</parameters.variant>>-{{ .Branch }}-{{ .Revision }}
+
+      - persist_to_workspace:
+          root: ~/
+          paths: project
+
+      - store_artifacts:
+          path: ~/project
+
+dev-filters: &dev-filters
+  branches:
+    ignore: master
+
+master-filters: &master-filters
+  branches:
+    only: master
+
+monthly-tag-jobs-filters: &monthly-tag-jobs-filters
+  branches:
+    ignore: /.*/
+  tags:
+    only: /monthly.*/
+
+dockerfiles: &dockerfiles
+  <<pipeline.parameters.lang>>/v1/Dockerfile,<<pipeline.parameters.lang>>/v2/Dockerfile,
+
+node-dockerfiles: &node-dockerfiles
+  node/<<pipeline.parameters.lang>>/v1/Dockerfile,node/<<pipeline.parameters.lang>>/v2/Dockerfile,
+
+publish-tags: &publish-tags
+  latest<<#pipeline.parameters.monthly>>,<<pipeline.parameters.version>>-stable<</pipeline.parameters.monthly>>
+
+node-publish-tags: &node-publish-tags
+  <<#pipeline.parameters.monthly>><<pipeline.parameters.version>>-stable-node<</pipeline.parameters.monthly>>
+
+workflows:
+  monthly-cron-trigger:
+    triggers:
+      - schedule:
+          cron: "21 12 3 * *"
+          filters: *master-filters
+    jobs:
+      - cimg/trigger-monthly-tag-jobs:
+          context: image-publishing
+          ssh-fingerprints: 67:3b:d4:92:de:14:f6:41:85:d7:9a:3a:72:23:78:26
+          filters: *master-filters
+
+  monthly-tag-jobs:
+    jobs:
+      - prepare-dockerfiles:
+          name: prepare-dockerfiles-<<pipeline.parameters.lang>>-stable
+          base-org-image-tag: cimg/base:stable
+          step-name: Prepare cimg/<<pipeline.parameters.lang>>:stable Dockerfiles from template
+          filters: *monthly-tag-jobs-filters
+
+      - prepare-dockerfiles:
+          name: prepare-dockerfiles-<<pipeline.parameters.lang>>-stable-node
+          base-org-image-tag: cimg/base:stable-node
+          step-name: Prepare cimg/<<pipeline.parameters.lang>>:stable-node Dockerfiles from template
+          variant: node
+          filters: *monthly-tag-jobs-filters
+
+      - docker/hadolint:
+          name: lint-<<pipeline.parameters.lang>>-stable
+          checkout: false
+          attach-workspace: true
+          workspace-root: ~/
+          dockerfiles: *dockerfiles
+          filters: *monthly-tag-jobs-filters
+          requires: [prepare-dockerfiles-<<pipeline.parameters.lang>>-stable]
+
+      - docker/hadolint:
+          name: lint-<<pipeline.parameters.lang>>-stable-node
+          context: image-publishing
+          checkout: false
+          attach-workspace: true
+          workspace-root: ~/
+          dockerfiles: *node-dockerfiles
+          filters: *monthly-tag-jobs-filters
+          requires: [prepare-dockerfiles-<<pipeline.parameters.lang>>-stable-node]
+
+      - trigger-pipeline-builds:
+          name: trigger-pipeline-builds-stable
+          context: image-publishing
+          image-tag: "$( date +%Y.%m )"
+          target: cimg
+          monthly: true
+          filters: *monthly-tag-jobs-filters
+          requires: [lint-<<pipeline.parameters.lang>>-stable]
+
+      - trigger-pipeline-builds:
+          name: trigger-pipeline-builds-stable-node
+          context: image-publishing
+          image-tag: "$( date +%Y.%m )"
+          target: cimg
+          monthly: true
+          node: true
+          filters: *monthly-tag-jobs-filters
+          requires: [lint-<<pipeline.parameters.lang>>-stable-node]
+
+  commit-ccitest-lint-dev:
+    when: <<pipeline.parameters.commit>>
+    jobs:
+      - prepare-dockerfiles:
+          name: prepare-dockerfiles-<<pipeline.parameters.lang>>-ccitest
+          base-org-image-tag: cimg/base:edge
+          step-name: Prepare ccitest/<<pipeline.parameters.lang>> Dockerfiles from template
+          filters: *dev-filters
+
+      - docker/hadolint:
+          name: lint-<<pipeline.parameters.lang>>-ccitest
+          checkout: false
+          attach-workspace: true
+          workspace-root: ~/
+          dockerfiles: *dockerfiles
+          filters: *dev-filters
+          requires: [prepare-dockerfiles-<<pipeline.parameters.lang>>-ccitest]
+
+      - trigger-pipeline-builds:
+          name: trigger-pipeline-builds-ccitest
+          context: image-publishing
+          filters: *dev-filters
+          requires: [lint-<<pipeline.parameters.lang>>-ccitest]
+
+  commit-ccitest-node-lint-dev:
+    when: <<pipeline.parameters.commit>>
+    jobs:
+      - prepare-dockerfiles:
+          name: prepare-dockerfiles-<<pipeline.parameters.lang>>-ccitest-node
+          base-org-image-tag: cimg/base:edge-node
+          step-name: Prepare ccitest/<<pipeline.parameters.lang>>:node Dockerfiles from template
+          variant: node
+          filters: *dev-filters
+
+      - docker/hadolint:
+          name: lint-<<pipeline.parameters.lang>>-ccitest-node
+          context: image-publishing
+          checkout: false
+          attach-workspace: true
+          workspace-root: ~/
+          dockerfiles: *node-dockerfiles
+          filters: *dev-filters
+          requires: [prepare-dockerfiles-<<pipeline.parameters.lang>>-ccitest-node]
+
+      - trigger-pipeline-builds:
+          name: trigger-pipeline-builds-ccitest-node
+          context: image-publishing
+          node: true
+          filters: *dev-filters
+          requires: [lint-<<pipeline.parameters.lang>>-ccitest-node]
+
+  commit-edge-lint-master:
+    when: <<pipeline.parameters.commit>>
+    jobs:
+      - prepare-dockerfiles:
+          name: prepare-dockerfiles-<<pipeline.parameters.lang>>-edge
+          base-org-image-tag: cimg/base:edge
+          step-name: Prepare cimg/<<pipeline.parameters.lang>>:edge Dockerfiles from template
+          filters: *master-filters
+
+      - docker/hadolint:
+          name: lint-<<pipeline.parameters.lang>>-edge
+          checkout: false
+          attach-workspace: true
+          workspace-root: ~/
+          dockerfiles: *dockerfiles
+          filters: *master-filters
+          requires: [prepare-dockerfiles-<<pipeline.parameters.lang>>-edge]
+
+      - trigger-pipeline-builds:
+          name: trigger-pipeline-builds-edge
+          context: image-publishing
+          image-tag: edge
+          target: cimg
+          filters: *master-filters
+          requires: [lint-<<pipeline.parameters.lang>>-edge]
+
+  commit-edge-node-lint-master:
+    when: <<pipeline.parameters.commit>>
+    jobs:
+      - prepare-dockerfiles:
+          name: prepare-dockerfiles-<<pipeline.parameters.lang>>-edge-node
+          base-org-image-tag: cimg/base:edge-node
+          step-name: Prepare cimg/<<pipeline.parameters.lang>>:edge-node Dockerfiles from template
+          variant: node
+          filters: *master-filters
+
+      - docker/hadolint:
+          name: lint-<<pipeline.parameters.lang>>-edge-node
+          context: image-publishing
+          checkout: false
+          attach-workspace: true
+          workspace-root: ~/
+          dockerfiles: *node-dockerfiles
+          filters: *master-filters
+          requires: [prepare-dockerfiles-<<pipeline.parameters.lang>>-edge-node]
+
+      - trigger-pipeline-builds:
+          name: trigger-pipeline-builds-edge-node
+          context: image-publishing
+          image-tag: edge
+          target: cimg
+          node: true
+          filters: *master-filters
+          requires: [lint-<<pipeline.parameters.lang>>-edge-node]
+
+  build-test-deploy:
+    when: <<pipeline.parameters.build>>
+    jobs:
+      - cimg/build-test-deploy:
+          name: <<pipeline.parameters.lang>>-<<pipeline.parameters.version>>
+          context: image-publishing
+          restore-cache: true
+          cache-key: <<pipeline.parameters.lang>>-dockerfiles-{{ .Branch }}-{{ .Revision }}
+          dockerfile-path: ~/project/<<pipeline.parameters.lang>>/<<pipeline.parameters.version>>
+          image-name: <<pipeline.parameters.target>>/<<pipeline.parameters.lang>>
+          image-tag: <<pipeline.parameters.version>>-<<pipeline.parameters.image-tag>>
+          extra-build-args: --pull
+          goss-yaml-dir-path: ~/project
+          test-suite-name: <<pipeline.parameters.lang>>
+          deploy: true
+          publish-tags: *publish-tags
+
+  build-test-deploy-node:
+    when: <<pipeline.parameters.build-node>>
+    jobs:
+      - cimg/build-test-deploy:
+          name: <<pipeline.parameters.lang>>-<<pipeline.parameters.version>>-node
+          context: image-publishing
+          restore-cache: true
+          cache-key: <<pipeline.parameters.lang>>-dockerfiles-node-{{ .Branch }}-{{ .Revision }}
+          dockerfile-path: ~/project/node/<<pipeline.parameters.version>>
+          image-name: <<pipeline.parameters.target>>/<<pipeline.parameters.lang>>
+          image-tag: <<pipeline.parameters.version>>-<<pipeline.parameters.image-tag>>-node
+          extra-build-args: --pull
+          goss-yaml-dir-path: ~/project
+          test-suite-name: <<pipeline.parameters.lang>>-node
+          deploy: true
+          publish-tags: *node-publish-tags
