@@ -361,7 +361,7 @@ workflows:
           name: <<pipeline.parameters.lang>>-<<pipeline.parameters.version>>-node
           context: image-publishing
           restore-cache: true
-          cache-key: <<pipeline.parameters.lang>><<#parameters.variant>>-<<parameters.variant>><</parameters.variant>>-dockerfiles-{{ .Branch }}-{{ .Revision }}
+          cache-key: <<pipeline.parameters.lang>>-node-dockerfiles-{{ .Branch }}-{{ .Revision }}
           dockerfile-path: ~/project/node/<<pipeline.parameters.version>>
           image-name: <<pipeline.parameters.target>>/<<pipeline.parameters.lang>>
           image-tag: <<pipeline.parameters.version>>-<<pipeline.parameters.image-tag>>-node
