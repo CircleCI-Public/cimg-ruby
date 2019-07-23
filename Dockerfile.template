@@ -28,6 +28,7 @@ RUN mkdir -p /usr/local/etc; \
 RUN savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
+		autoconf \
 		bison \
 		dpkg-dev \
 		libgdbm-dev \
