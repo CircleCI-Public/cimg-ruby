@@ -90,9 +90,10 @@ RUN apt-get purge -y --auto-remove \
 	[ "$(command -v ruby)" = '/usr/local/bin/ruby' ]; \
 # rough smoke test
 	ruby --version; \
-	gem --version; \
-	gem install bundler \
-	bundle --version
+	gem --version
+	# ; \
+	# gem install bundler \
+	# bundle --version
 
 # Set default shell for users
 SHELL ["/bin/bash", "-c"]
