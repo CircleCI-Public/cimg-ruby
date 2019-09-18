@@ -7,7 +7,7 @@ LABEL maintainer="CircleCI Community & Partner Engineering Team <community-partn
 # Gem docs aren't useful in a CI environment
 RUN echo "gem: --no-document" >> ~/.gemrc
 
-ENV RUBY_VERSION 2.4.6
+ENV RUBY_VERSION 2.4.7
 ENV RUBY_MAJOR 2.4
 
 # Workaround https://github.com/inversepath/usbarmory-debian-base_image/issues/9#issuecomment-466594168
