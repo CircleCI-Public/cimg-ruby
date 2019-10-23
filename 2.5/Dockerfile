@@ -11,7 +11,7 @@ RUN mkdir -p /usr/local/etc; \
 		echo 'update: --no-document'; \
 	} >> /usr/local/etc/gemrc
 
-ENV RUBY_VERSION=2.5.6 \
+ENV RUBY_VERSION=2.5.7 \
 	RUBY_MAJOR=2.5
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
