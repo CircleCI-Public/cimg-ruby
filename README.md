@@ -1,8 +1,8 @@
 <div align="center">
 	<p>
-		<img alt="CircleCI Logo" src="img/circle-circleci.svg" width="75" />
-		<img alt="Docker Logo" src="img/circle-docker.svg" width="75" />
-		<img alt="Ruby Logo" src="img/circle-ruby.svg" width="75" />
+		<img alt="CircleCI Logo" src="https://raw.github.com/CircleCI-Public/cimg-ruby/master/img/circle-circleci.svg?sanitize=true" width="75" />
+		<img alt="Docker Logo" src="https://raw.github.com/CircleCI-Public/cimg-ruby/master/img/circle-docker.svg?sanitize=true" width="75" />
+		<img alt="Ruby Logo" src="https://raw.github.com/CircleCI-Public/cimg-ruby/master/img/circle-ruby.svg?sanitize=true" width="75" />
 	</p>
 	<h1>CircleCI Convenience Images => Ruby</h1>
 	<h3>A Continuous Integration focused Ruby Docker image built to run on CircleCI</h3>
