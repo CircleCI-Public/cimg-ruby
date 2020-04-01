@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
-docker build --file 2.4/Dockerfile -t cimg/ruby:2.4.10  -t cimg/ruby:2.4 .
-docker build --file 2.4/node/Dockerfile -t cimg/ruby:2.4.10-node  -t cimg/ruby:2.4-node .
+docker build --file 2.5/Dockerfile -t cimg/ruby:2.5.8  -t cimg/ruby:2.5 .
+docker build --file 2.5/node/Dockerfile -t cimg/ruby:2.5.8-node  -t cimg/ruby:2.5-node .
