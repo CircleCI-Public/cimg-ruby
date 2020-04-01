@@ -1,10 +1,10 @@
 # vim:set ft=dockerfile:
 
-FROM cimg/base:2020.01
+FROM cimg/base:2020.03
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
-ENV RUBY_VERSION=2.4.9 \
+ENV RUBY_VERSION=2.4.10 \
 	RUBY_MAJOR=2.4
 
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
