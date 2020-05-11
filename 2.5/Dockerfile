@@ -1,6 +1,6 @@
 # vim:set ft=dockerfile:
 
-FROM cimg/base:2020.03
+FROM cimg/base:2020.05
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
@@ -14,6 +14,12 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		libffi-dev \
 		libgdbm5 \
 		libgdbm-dev \
+		#remove once on cimg/base:2020.06 or later
+		libmariadb-dev \
+		#remove once on cimg/base:2020.06 or later
+		libmariadb-dev-compat \
+		#remove once on cimg/base:2020.06 or later
+		libpq-dev \
 		libncurses5-dev \
 		libreadline6-dev \
 		libssl-dev \
