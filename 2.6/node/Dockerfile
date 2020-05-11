@@ -4,14 +4,12 @@ FROM cimg/ruby:2.6.6
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
-# Version hardcoded for now in this repo. Eventually once:
-# https://github.com/CircleCI-Public/cimg-node/issues/16 is completed, this
 # Dockerfile will pull the latest LTS release from cimg-node.
-ENV NODE_VERSION 12.16.1
-
-RUN curl -L -o node.tar.xz "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" && \
+RUN curl -sSL "https://raw.githubusercontent.com/CircleCI-Public/cimg-node/master/ALIASES" -o nodeAliases.txt && \
+	NODE_VERSION=$(grep "lts" ./nodeAliases.txt | cut -d "=" -f 2-) && \
+	curl -L -o node.tar.xz "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" && \
 	sudo tar -xJf node.tar.xz -C /usr/local --strip-components=1 && \
-	rm node.tar.xz && \
+	rm node.tar.xz nodeAliases.txt && \
 	sudo ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
 ENV YARN_VERSION 1.22.4
