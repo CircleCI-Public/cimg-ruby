@@ -10,7 +10,7 @@
 
 [![CircleCI Build Status](https://circleci.com/gh/CircleCI-Public/cimg-ruby.svg?style=shield)](https://circleci.com/gh/CircleCI-Public/cimg-ruby) [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/CircleCI-Public/cimg-ruby/master/LICENSE) [![Docker Pulls](https://img.shields.io/docker/pulls/cimg/ruby)](https://hub.docker.com/r/cimg/ruby) [![CircleCI Community](https://img.shields.io/badge/community-CircleCI%20Discuss-343434.svg)](https://discuss.circleci.com/c/ecosystem/circleci-images)
 
-***This image is in beta and is designed to supercede the original CircleCI Node.js image, `circleci/ruby`.***
+***This image is designed to supercede the legacy CircleCI Ruby image, `circleci/ruby`.***
 
 `cimg/ruby` is a Docker image created by CircleCI with continuous integration builds in mind.
 Each tag contains a complete Ruby version, the `gem` command, Bundler, and any binaries and tools that are required for builds to complete successfully in a CircleCI environment.
