@@ -12,7 +12,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		bison \
 		dpkg-dev \
 		libffi-dev \
-		libgdbm5 \
+		libgdbm6 \
 		libgdbm-dev \
 		libncurses5-dev \
 		libreadline6-dev \
