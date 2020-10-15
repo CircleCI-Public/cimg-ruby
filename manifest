@@ -2,4 +2,4 @@
 
 repository=ruby
 parent=base
-variants=(node)
+variants=(node browsers)
