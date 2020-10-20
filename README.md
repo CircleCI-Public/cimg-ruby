@@ -35,14 +35,14 @@ For example:
 jobs:
   build:
     docker:
-      - image: cimg/ruby:2.6.5
+      - image: cimg/ruby:2.7.2
     steps:
       - checkout
       - run: ruby --version
 ```
 
 In the above example, the CircleCI Ruby Docker image is used for the primary container.
-More specifically, the tag `2.6.5` is used meaning the version of Ruby will be Ruby v2.6.5.
+More specifically, the tag `2.7.2` is used meaning the version of Ruby will be Ruby v2.7.2.
 You can now use Ruby within the steps for this job.
 
 
