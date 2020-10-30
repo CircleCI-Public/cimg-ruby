@@ -64,7 +64,7 @@ The Node.js variant can be used by appending `-node` to the end of an existing `
 jobs:
   build:
     docker:
-      - image: cimg/ruby:2.6.5-node
+      - image: cimg/ruby:2.7-node
     steps:
       - checkout
       - run: ruby --version
@@ -86,7 +86,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: cimg/ruby:2.6.5-browsers
+      - image: cimg/ruby:2.7-browsers
     steps:
       - browser-tools/install-browsers
       - checkout
