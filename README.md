@@ -64,11 +64,37 @@ The Node.js variant can be used by appending `-node` to the end of an existing `
 jobs:
   build:
     docker:
-      - image: cimg/ruby:2.6.5-node
+      - image: cimg/ruby:2.7-node
     steps:
       - checkout
       - run: ruby --version
       - run: node --version
+```
+
+#### Browsers
+
+**The browsers variants are currently in beta. Please feel free to contribute to the conversation [here](https://discuss.circleci.com/t/next-gen-convenience-image-browsers-variant-beta/37794).**
+
+The browsers variant is the same Ruby image but with Node.js, Java, Selenium, and browser dependencies pre-installed via apt.
+The browsers variant can be used by appending `-browser` to the end of an existing `cimg/ruby` tag.
+The browsers variant is designed to work in conjunction with the [CircleCI Browser Tools orb](https://circleci.com/developer/orbs/orb/circleci/browser-tools).
+You can use the orb to install a version of Google Chrome and/or Firefox into your build. The image contains all of the supporting tools needed to use both the browser and its driver.
+
+```yaml
+orbs:
+  browser-tools: circleci/browser-tools@1.1.0
+jobs:
+  build:
+    docker:
+      - image: cimg/ruby:2.7-browsers
+    steps:
+      - browser-tools/install-browsers
+      - checkout
+      - run: |
+          ruby --version
+          node --version
+          java --version
+          google-chome --version
 ```
 
 ### Tagging Scheme
