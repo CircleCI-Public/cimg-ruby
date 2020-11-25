@@ -82,19 +82,19 @@ You can use the orb to install a version of Google Chrome and/or Firefox into yo
 
 ```yaml
 orbs:
-  browser-tools: circleci/browser-tools@1.1.0
+  browser-tools: circleci/browser-tools@1.1
 jobs:
   build:
     docker:
       - image: cimg/ruby:2.7-browsers
     steps:
-      - browser-tools/install-browsers
+      - browser-tools/install-browser-tools
       - checkout
       - run: |
           ruby --version
           node --version
           java --version
-          google-chome --version
+          google-chrome --version
 ```
 
 ### Tagging Scheme
