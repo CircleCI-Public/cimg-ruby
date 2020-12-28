@@ -1,11 +1,11 @@
 # vim:set ft=dockerfile:
 
-FROM cimg/%%PARENT%%:2020.12
+FROM cimg/base:2020.12
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
-ENV RUBY_VERSION=%%MAIN_VERSION%% \
-	RUBY_MAJOR=%%VERSION_MINOR%%
+ENV RUBY_VERSION=3.0.0 \
+	RUBY_MAJOR=3.0
 
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		autoconf \
