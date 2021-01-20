@@ -73,8 +73,6 @@ jobs:
 
 #### Browsers
 
-**The browsers variants are currently in beta. Please feel free to contribute to the conversation [here](https://discuss.circleci.com/t/next-gen-convenience-image-browsers-variant-beta/37794).**
-
 The browsers variant is the same Ruby image but with Node.js, Java, Selenium, and browser dependencies pre-installed via apt.
 The browsers variant can be used by appending `-browser` to the end of an existing `cimg/ruby` tag.
 The browsers variant is designed to work in conjunction with the [CircleCI Browser Tools orb](https://circleci.com/developer/orbs/orb/circleci/browser-tools).
