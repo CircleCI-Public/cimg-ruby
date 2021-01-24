@@ -1,6 +1,6 @@
 # vim:set ft=dockerfile:
 
-FROM cimg/base:2020.05
+FROM cimg/base:2020.12
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
@@ -12,20 +12,12 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		bison \
 		dpkg-dev \
 		libffi-dev \
-		libgdbm5 \
+		libgdbm6 \
 		libgdbm-dev \
-		#remove once on cimg/base:2020.06 or later
-		libmariadb-dev \
-		#remove once on cimg/base:2020.06 or later
-		libmariadb-dev-compat \
-		#remove once on cimg/base:2020.06 or later
-		libpq-dev \
 		libncurses5-dev \
 		libreadline6-dev \
 		libssl-dev \
 		libyaml-dev \
-		#remove once on cimg/base:2020.06 or later
-		tzdata \
 		zlib1g-dev && \
 	# Skip installing gem docs
 	echo "gem: --no-document" > ~/.gemrc && \
@@ -34,7 +26,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	curl -sSL $downloadURL | tar -xz -C ~/ruby --strip-components=1 && \
 	cd ~/ruby && \
 	autoconf && \
-	./configure && \
+	./configure --disable-install-doc --enable-shared --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" && \
 	make -j "$(nproc)" && \
 	sudo make install && \
 	mkdir ~/.rubygems && \

@@ -26,7 +26,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	curl -sSL $downloadURL | tar -xz -C ~/ruby --strip-components=1 && \
 	cd ~/ruby && \
 	autoconf && \
-	./configure && \
+	./configure --disable-install-doc --enable-shared --build="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" && \
 	make -j "$(nproc)" && \
 	sudo make install && \
 	mkdir ~/.rubygems && \
