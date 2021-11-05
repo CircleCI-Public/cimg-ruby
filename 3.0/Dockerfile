@@ -1,6 +1,6 @@
 # vim:set ft=dockerfile:
 
-FROM cimg/base:2021.04
+FROM cimg/base:2021.10
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
@@ -11,14 +11,38 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		autoconf \
 		bison \
 		dpkg-dev \
+		# Rails dep
+		ffmpeg \
+		# until the base image has it
+		libcurl4-openssl-dev \
 		libffi-dev \
 		libgdbm6 \
 		libgdbm-dev \
+		# Rails dep
+		libmysqlclient-dev \
 		libncurses5-dev \
+		# Rails dep
+		libpq-dev \
 		libreadline6-dev \
+		# install libsqlite3-dev until the base image has it
+		# Rails dep
+		libsqlite3-dev \
 		libssl-dev \
+		# Rails dep
+		libxml2-dev \
 		libyaml-dev \
-		zlib1g-dev && \
+		# Rails dep
+		memcached \
+		# Rails dep
+		mupdf \
+		# Rails dep
+		mupdf-tools \
+		# Rails dep
+		imagemagick \
+		# Rails dep
+		sqlite3 \
+		zlib1g-dev \
+	&& \
 	# Skip installing gem docs
 	echo "gem: --no-document" > ~/.gemrc && \
 	mkdir -p ~/ruby && \
@@ -41,4 +65,3 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 
 ENV GEM_HOME /home/circleci/.rubygems
 ENV PATH $GEM_HOME/bin:$BUNDLE_PATH/gems/bin:$PATH
-
