@@ -39,7 +39,7 @@ jobs:
             fi
       - when:
           condition:
-            equal: [main, << pipeline.git.branch >>]
+            equal: [master, << pipeline.git.branch >>]
           steps:
             - sonar/install:
                 version: "0.15.0"
