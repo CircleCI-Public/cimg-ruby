@@ -8,13 +8,12 @@
 	<h3>A Continuous Integration focused Ruby Docker image built to run on CircleCI</h3>
 </div>
 
-[![CircleCI Build Status](https://circleci.com/gh/CircleCI-Public/cimg-ruby.svg?style=shield)](https://circleci.com/gh/CircleCI-Public/cimg-ruby) [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/CircleCI-Public/cimg-ruby/master/LICENSE) [![Docker Pulls](https://img.shields.io/docker/pulls/cimg/ruby)](https://hub.docker.com/r/cimg/ruby) [![CircleCI Community](https://img.shields.io/badge/community-CircleCI%20Discuss-343434.svg)](https://discuss.circleci.com/c/ecosystem/circleci-images)
+[![CircleCI Build Status](https://circleci.com/gh/CircleCI-Public/cimg-ruby.svg?style=shield)](https://circleci.com/gh/CircleCI-Public/cimg-ruby) [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/CircleCI-Public/cimg-ruby/master/LICENSE) [![Docker Pulls](https://img.shields.io/docker/pulls/cimg/ruby)](https://hub.docker.com/r/cimg/ruby) [![CircleCI Community](https://img.shields.io/badge/community-CircleCI%20Discuss-343434.svg)](https://discuss.circleci.com/c/ecosystem/circleci-images) [![Repository](https://img.shields.io/badge/github-README-brightgreen)](https://github.com/CircleCI-Public/cimg-ruby)
 
-***This image is designed to supercede the legacy CircleCI Ruby image, `circleci/ruby`.***
+**_This image is designed to supercede the legacy CircleCI Ruby image, `circleci/ruby`._**
 
 `cimg/ruby` is a Docker image created by CircleCI with continuous integration builds in mind.
 Each tag contains a complete Ruby version, the `gem` command, Bundler, and any binaries and tools that are required for builds to complete successfully in a CircleCI environment.
-
 
 ## Table of Contents
 
@@ -24,7 +23,6 @@ Each tag contains a complete Ruby version, the `gem` command, Bundler, and any b
 - [Contributing](#contributing)
 - [Additional Resources](#additional-resources)
 - [License](#license)
-
 
 ## Getting Started
 
@@ -44,7 +42,6 @@ jobs:
 In the above example, the CircleCI Ruby Docker image is used for the primary container.
 More specifically, the tag `2.7.2` is used meaning the version of Ruby will be Ruby v2.7.2.
 You can now use Ruby within the steps for this job.
-
 
 ## How This Image Works
 
@@ -110,7 +107,6 @@ For example, the tag `2.6` points to Ruby v2.6.5 now, but when the next release 
 
 `[-variant]` - Variant tags, if available, can optionally be used.
 For example, the Node.js variant can be used like this: `cimg/ruby:2.6.5-node`.
-
 
 ## Development
 
@@ -214,14 +210,13 @@ git commit -m "Updating submodule for foo."
 
 **parent image** - By design, when changes happen to a parent image, they don't appear in existing Ruby images.
 This is to aid in "determinism" and prevent breaking customer builds.
-New Ruby images/versions though  will automatically pick up the changes.
+New Ruby images/versions though will automatically pick up the changes.
 
-If you *really* want to publish changes from a parent image into the Ruby image, you have to build a specific image version as if it was a new image.
+If you _really_ want to publish changes from a parent image into the Ruby image, you have to build a specific image version as if it was a new image.
 This will create a new Dockerfile and once published, a new image.
 
 **Ruby specific changes** - Editing the `Dockerfile.template` file in this repo is how to modify the Ruby image specifically.
 Don't forget that to see any of these changes locally, the `gen-dockerfiles.sh` script will need to be run again (see above).
-
 
 ## Contributing
 
@@ -231,14 +226,12 @@ We encourage [issues](https://github.com/CircleCI-Public/cimg-ruby/issues) to an
 1. PRs are welcome. If you have a PR that will potentially take a large amount of time to make, it will be better to open an issue to discuss it first to make sure it's something worth investing the time in.
 1. Issues should be to report bugs or request additional/removal of tools in this image. For help with images, please visit [CircleCI Discuss](https://discuss.circleci.com/c/ecosystem/circleci-images).
 
-
 ## Additional Resources
 
 [CircleCI Docs](https://circleci.com/docs/) - The official CircleCI Documentation website.
 [CircleCI Configuration Reference](https://circleci.com/docs/2.0/configuration-reference/#section=configuration) - From CircleCI Docs, the configuration reference page is one of the most useful pages we have.
 It will list all of the keys and values supported in `.circleci/config.yml`.
 [Docker Docs](https://docs.docker.com/) - For simple projects this won't be needed but if you want to dive deeper into learning Docker, this is a great resource.
-
 
 ## License
 
