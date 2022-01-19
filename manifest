@@ -3,3 +3,4 @@
 repository=ruby
 parent=base
 variants=(node browsers)
+namespace=cimg
