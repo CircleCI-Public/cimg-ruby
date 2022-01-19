@@ -1,14 +1,14 @@
 <div align="center">
 	<p>
-		<img alt="CircleCI Logo" src="https://raw.github.com/CircleCI-Public/cimg-ruby/master/img/circle-circleci.svg?sanitize=true" width="75" />
-		<img alt="Docker Logo" src="https://raw.github.com/CircleCI-Public/cimg-ruby/master/img/circle-docker.svg?sanitize=true" width="75" />
-		<img alt="Ruby Logo" src="https://raw.github.com/CircleCI-Public/cimg-ruby/master/img/circle-ruby.svg?sanitize=true" width="75" />
+		<img alt="CircleCI Logo" src="https://raw.github.com/CircleCI-Public/cimg-ruby/main/img/circle-circleci.svg?sanitize=true" width="75" />
+		<img alt="Docker Logo" src="https://raw.github.com/CircleCI-Public/cimg-ruby/main/img/circle-docker.svg?sanitize=true" width="75" />
+		<img alt="Ruby Logo" src="https://raw.github.com/CircleCI-Public/cimg-ruby/main/img/circle-ruby.svg?sanitize=true" width="75" />
 	</p>
 	<h1>CircleCI Convenience Images => Ruby</h1>
 	<h3>A Continuous Integration focused Ruby Docker image built to run on CircleCI</h3>
 </div>
 
-[![CircleCI Build Status](https://circleci.com/gh/CircleCI-Public/cimg-ruby.svg?style=shield)](https://circleci.com/gh/CircleCI-Public/cimg-ruby) [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/CircleCI-Public/cimg-ruby/master/LICENSE) [![Docker Pulls](https://img.shields.io/docker/pulls/cimg/ruby)](https://hub.docker.com/r/cimg/ruby) [![CircleCI Community](https://img.shields.io/badge/community-CircleCI%20Discuss-343434.svg)](https://discuss.circleci.com/c/ecosystem/circleci-images) [![Repository](https://img.shields.io/badge/github-README-brightgreen)](https://github.com/CircleCI-Public/cimg-ruby)
+[![CircleCI Build Status](https://circleci.com/gh/CircleCI-Public/cimg-ruby.svg?style=shield)](https://circleci.com/gh/CircleCI-Public/cimg-ruby) [![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/CircleCI-Public/cimg-ruby/main/LICENSE) [![Docker Pulls](https://img.shields.io/docker/pulls/cimg/ruby)](https://hub.docker.com/r/cimg/ruby) [![CircleCI Community](https://img.shields.io/badge/community-CircleCI%20Discuss-343434.svg)](https://discuss.circleci.com/c/ecosystem/circleci-images) [![Repository](https://img.shields.io/badge/github-README-brightgreen)](https://github.com/CircleCI-Public/cimg-ruby)
 
 **_This image is designed to supercede the legacy CircleCI Ruby image, `circleci/ruby`._**
 
@@ -190,7 +190,7 @@ All that would need to be done after that is:
 - review the PR
 - merge the PR
 
-The master branch build will then publish a release.
+The main branch build will then publish a release.
 
 ### Incorporating Changes
 
