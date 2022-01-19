@@ -23,9 +23,9 @@ jobs:
             ./build-images.sh
             echo 'export DOCKER_PASS=$DOCKER_TOKEN' >> $BASH_ENV
       - deploy:
-          name: "Publish Docker Images (master branch only)"
+          name: "Publish Docker Images (main branch only)"
           command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+            if [ "${CIRCLE_BRANCH}" == "main" ]; then
               
               echo $DOCKER_TOKEN | docker login -u $DOCKER_USER --password-stdin
               
@@ -39,7 +39,7 @@ jobs:
             fi
       - when:
           condition:
-            equal: [master, << pipeline.git.branch >>]
+            equal: [main, << pipeline.git.branch >>]
           steps:
             - sonar/install:
                 version: "0.15.0"
