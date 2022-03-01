@@ -7,7 +7,7 @@ LABEL maintainer="Community & Partner Engineering Team <community-partner@circle
 ENV RUBY_VERSION=2.6.9 \
 	RUBY_MAJOR=2.6
 
-RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
+RUN sudo apt-get update --allow-releaseinfo-change && sudo apt-get install -y --no-install-recommends \
 		autoconf \
 		bison \
 		dpkg-dev \
