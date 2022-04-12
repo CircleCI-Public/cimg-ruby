@@ -1,10 +1,12 @@
 # vim:set ft=dockerfile:
 
-FROM cimg/base:2021.10
+# Do not edit individual Dockerfiles manually. Instead, please make changes to the Dockerfile.template, which will be used by the build script to generate Dockerfiles.
+
+FROM cimg/base:2022.04
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
-ENV RUBY_VERSION=2.6.9 \
+ENV RUBY_VERSION=2.6.10 \
 	RUBY_MAJOR=2.6
 
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
@@ -50,7 +52,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	curl -sSL $downloadURL | tar -xz -C ~/ruby --strip-components=1 && \
 	cd ~/ruby && \
 	autoconf && \
-	./configure && \
+	./configure --enable-shared && \
 	make -j "$(nproc)" && \
 	sudo make install && \
 	mkdir ~/.rubygems && \
