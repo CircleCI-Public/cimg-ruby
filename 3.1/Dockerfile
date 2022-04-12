@@ -2,11 +2,11 @@
 
 # Do not edit individual Dockerfiles manually. Instead, please make changes to the Dockerfile.template, which will be used by the build script to generate Dockerfiles.
 
-FROM cimg/base:2022.01
+FROM cimg/base:2022.04
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
-ENV RUBY_VERSION=3.1.1 \
+ENV RUBY_VERSION=3.1.2 \
 	RUBY_MAJOR=3.1
 
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
@@ -52,7 +52,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	curl -sSL $downloadURL | tar -xz -C ~/ruby --strip-components=1 && \
 	cd ~/ruby && \
 	autoconf && \
-	./configure && \
+	./configure --enable-shared && \
 	make -j "$(nproc)" && \
 	sudo make install && \
 	mkdir ~/.rubygems && \
