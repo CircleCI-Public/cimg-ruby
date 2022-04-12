@@ -6,7 +6,7 @@ FROM cimg/base:2022.04
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
-ENV RUBY_VERSION=3.0.1 \
+ENV RUBY_VERSION=3.0.4 \
 	RUBY_MAJOR=3.0
 
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
