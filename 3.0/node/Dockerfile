@@ -12,7 +12,7 @@ RUN curl -sSL "https://raw.githubusercontent.com/CircleCI-Public/cimg-node/main/
 	rm node.tar.xz nodeAliases.txt && \
 	sudo ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
-ENV YARN_VERSION 1.22.5
+ENV YARN_VERSION 1.22.18
 RUN curl -L -o yarn.tar.gz "https://yarnpkg.com/downloads/${YARN_VERSION}/yarn-v${YARN_VERSION}.tar.gz" && \
 	sudo tar -xzf yarn.tar.gz -C /opt/ && \
 	rm yarn.tar.gz && \
