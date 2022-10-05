@@ -18,34 +18,6 @@ RUN sudo apt-get update && \
         echo "Java not found in parent image, installing..." && \
         sudo apt-get install -y --no-install-recommends --no-upgrade openjdk-11-jre; \
     fi && \
-
-    # Firefox deps
-    sudo apt-get install -y --no-install-recommends --no-upgrade \
-		libdbus-glib-1-2 \
-		libgtk-3-dev \
-		libxt6 \
-	&& \
-
-    # Google Chrome deps
-	# Some of these packages should be pulled into their own section
-    sudo apt-get install -y --no-install-recommends --no-upgrade \
-        fonts-liberation \
-        libappindicator3-1 \
-        libasound2 \
-        libatk-bridge2.0-0 \
-        libatspi2.0-0 \
-        libcairo2 \
-        libcups2 \
-        libgbm1 \
-        libgdk-pixbuf2.0-0 \
-        libgtk-3-0 \
-        libpango-1.0-0 \
-        libpangocairo-1.0-0 \
-        libxcursor1 \
-		libxss1 \
-        xdg-utils \
-		xvfb \
-	&& \
 	sudo rm -rf /var/lib/apt/lists/*
 
 # Below is setup to allow xvfb to start when the container starts up.
@@ -58,6 +30,34 @@ ENV DISPLAY=":99"
 #	sudo mv /tmp/entrypoint /docker-entrypoint.sh
 RUN	printf '#!/bin/sh\nXvfb :99 -screen 0 1280x1024x24 &\nexec "$@"\n' | sudo tee /docker-entrypoint.sh && \
 	sudo chmod +x /docker-entrypoint.sh
+
+# Install a single version of Firefox. This isn't intended to be a regularly
+# updated thing. Instead, if this version of Firefox isn't want the end user
+# wants they should install a different version via the Browser Tools Orb.
+#
+# Canonical made a major technology change in how Firefox is installed from
+# Ubuntu 21.10 and up. The general CI space doesn't seem to be ready for a snap
+# based Firefox right now so we are installing the original deb based version
+# from Ubuntu Focal, even if the current Ubuntu version is newer.
+RUN echo 'deb http://us.archive.ubuntu.com/ubuntu/ focal-updates main' | sudo tee /etc/apt/sources.list.d/firefox.list && \
+	echo 'Package: firefox' | sudo tee -a /etc/apt/preferences.d/firefox.pref && \
+	echo 'Pin: release n=focal' | sudo tee -a /etc/apt/preferences.d/firefox.pref && \
+	echo 'Pin-Priority: 500' | sudo tee -a /etc/apt/preferences.d/firefox.pref && \
+
+	sudo apt-get update && \
+	sudo apt-get install --no-install-recommends --yes firefox && \
+	sudo rm -rf /var/lib/apt/lists/* && \
+	firefox --version
+
+# Install a single version of Google Chrome Stable. This isn't intended to be a
+# regularly updated thing. Instead, if this version of Chrome isn't want the
+# end user wants they should install a different version via the Browser Tools
+# Orb.
+RUN wget -q -O - "https://dl.google.com/linux/linux_signing_key.pub" | sudo apt-key add - && \
+	echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" | sudo tee /etc/apt/sources.list.d/google-chrome.list && \
+	sudo apt-get update && \
+	sudo apt-get install google-chrome-stable && \
+	sudo rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["/bin/sh"]
