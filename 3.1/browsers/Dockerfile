@@ -11,6 +11,9 @@ RUN curl -sSL -o selenium-server-standalone-${SELENIUM_VER}.jar "https://seleniu
     rm selenium-server-standalone-${SELENIUM_VER}.jar
 
 RUN sudo apt-get update && \
+	sudo apt-get install --yes --no-install-recommends \
+		xvfb \
+	&& \
 
     # Install Java only if it's not already available
     # Java is installed for Selenium
@@ -32,25 +35,22 @@ RUN	printf '#!/bin/sh\nXvfb :99 -screen 0 1280x1024x24 &\nexec "$@"\n' | sudo te
 	sudo chmod +x /docker-entrypoint.sh
 
 # Install a single version of Firefox. This isn't intended to be a regularly
-# updated thing. Instead, if this version of Firefox isn't want the end user
+# updated thing. Instead, if this version of Firefox isn't what the end user
 # wants they should install a different version via the Browser Tools Orb.
 #
 # Canonical made a major technology change in how Firefox is installed from
 # Ubuntu 21.10 and up. The general CI space doesn't seem to be ready for a snap
-# based Firefox right now so we are installing the original deb based version
-# from Ubuntu Focal, even if the current Ubuntu version is newer.
-RUN echo 'deb http://us.archive.ubuntu.com/ubuntu/ focal-updates main' | sudo tee /etc/apt/sources.list.d/firefox.list && \
-	echo 'Package: firefox' | sudo tee -a /etc/apt/preferences.d/firefox.pref && \
-	echo 'Pin: release n=focal' | sudo tee -a /etc/apt/preferences.d/firefox.pref && \
-	echo 'Pin-Priority: 500' | sudo tee -a /etc/apt/preferences.d/firefox.pref && \
-
-	sudo apt-get update && \
+# based Firefox right now so we are installing it from the Mozilla PPA.
+RUN echo 'Package: *' | sudo tee -a /etc/apt/preferences.d/firefox.pref && \
+	echo 'Pin: release o=LP-PPA-mozillateam' | sudo tee -a /etc/apt/preferences.d/firefox.pref && \
+	echo 'Pin-Priority: 1001' | sudo tee -a /etc/apt/preferences.d/firefox.pref && \
+	sudo add-apt-repository --yes ppa:mozillateam/ppa && \
 	sudo apt-get install --no-install-recommends --yes firefox && \
 	sudo rm -rf /var/lib/apt/lists/* && \
 	firefox --version
 
 # Install a single version of Google Chrome Stable. This isn't intended to be a
-# regularly updated thing. Instead, if this version of Chrome isn't want the
+# regularly updated thing. Instead, if this version of Chrome isn't what the
 # end user wants they should install a different version via the Browser Tools
 # Orb.
 RUN wget -q -O - "https://dl.google.com/linux/linux_signing_key.pub" | sudo apt-key add - && \
