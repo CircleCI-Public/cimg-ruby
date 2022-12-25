@@ -101,12 +101,12 @@ cimg/ruby:<ruby-version>[-variant]
 ```
 
 `<ruby-version>` - The version of Ruby to use.
-This can be a full SemVer point release (such as `2.6.5`) or just the minor release (such as `2.6`).
+This can be a full SemVer point release (such as `3.2.0`) or just the minor release (such as `3.2`).
 If you use the minor release tag, it will automatically point to future patch updates as they are released.
-For example, the tag `2.6` points to Ruby v2.6.5 now, but when the next release comes out, it will point to Ruby v2.6.6.
+For example, the tag `3.2` points to Ruby v3.2.0 now, but when the next release comes out, it will point to Ruby v3.2.1.
 
 `[-variant]` - Variant tags, if available, can optionally be used.
-For example, the Node.js variant can be used like this: `cimg/ruby:2.6.5-node`.
+For example, the Node.js variant can be used like this: `cimg/ruby:3.2.0-node`.
 
 ## Development
 
@@ -145,19 +145,19 @@ git clone --recurse-submodules git@github.com:CircleCI-Public/cimg-ruby.git
 ### Generating Dockerfiles
 
 Dockerfiles can be generated for a specific Ruby version using the `gen-dockerfiles.sh` script.
-For example, to generate the Dockerfile for Ruby v2.6.5, you would run the following from the root of the repo:
+For example, to generate the Dockerfile for Ruby v3.2.0, you would run the following from the root of the repo:
 
 ```bash
-./shared/gen-dockerfiles.sh 2.6.5
+./shared/gen-dockerfiles.sh 3.2.0
 ```
 
-The generated Dockerfile will be located at `./2.6/Dockefile`.
+The generated Dockerfile will be located at `./3.2/Dockefile`.
 To build this image locally and try it out, you can run the following:
 
 ```bash
-cd 2.6/
-docker build -t test/ruby:2.6.5 .
-docker run -it test/ruby:2.6.5 bash
+cd 3.2/
+docker build -t test/ruby:3.2.0 .
+docker run -it test/ruby:3.2.0 bash
 ```
 
 ### Building the Dockerfiles
