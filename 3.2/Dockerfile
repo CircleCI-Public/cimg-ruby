@@ -6,12 +6,11 @@
 # specific reason to use a different one. This means January, April, July, or
 # October.
 
-# NOTE: This uses November due to an OpenSSL CVE fix. We will resume using quarterly versions of cimg-base in Q1
-FROM cimg/base:2022.11
+FROM cimg/base:2023.01
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
-ENV RUBY_VERSION=3.2.0 \
+ENV RUBY_VERSION=3.2.1 \
 	RUBY_MAJOR=3.2
 
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
