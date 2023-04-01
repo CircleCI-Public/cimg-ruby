@@ -11,7 +11,7 @@ FROM cimg/base:2022.11-20.04
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
-ENV RUBY_VERSION=2.7.8 \
+ENV RUBY_VERSION=2.7.7 \
 	RUBY_MAJOR=2.7
 
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
