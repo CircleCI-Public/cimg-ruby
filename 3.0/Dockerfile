@@ -6,12 +6,11 @@
 # specific reason to use a different one. This means January, April, July, or
 # October.
 
-# NOTE: This uses November due to an OpenSSL CVE fix. We will resume using quarterly versions of cimg-base in Q1
-FROM cimg/base:2022.11-20.04
+FROM cimg/base:2023.01
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
-ENV RUBY_VERSION=3.0.5 \
+ENV RUBY_VERSION=3.0.6 \
 	RUBY_MAJOR=3.0
 
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
@@ -49,6 +48,8 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		# Rails dep
 		sqlite3 \
 		zlib1g-dev \
+		# YJIT dep
+		rustc \
 	&& \
 	# Skip installing gem docs
 	echo "gem: --no-document" > ~/.gemrc && \
@@ -57,7 +58,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	curl -sSL $downloadURL | tar -xz -C ~/ruby --strip-components=1 && \
 	cd ~/ruby && \
 	autoconf && \
-	./configure --enable-shared && \
+	./configure --enable-yjit --enable-shared && \
 	make -j "$(nproc)" && \
 	sudo make install && \
 	mkdir ~/.rubygems && \
@@ -68,7 +69,10 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	gem --version && \
 	sudo gem update --system && \
 	gem --version && \
-	bundle --version
+	bundle --version && \
+
+	# Cleanup YJIT install deps
+	sudo apt-get remove rustc && sudo apt-get autoremove
 
 ENV GEM_HOME /home/circleci/.rubygems
 ENV PATH $GEM_HOME/bin:$BUNDLE_PATH/gems/bin:$PATH
