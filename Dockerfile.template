@@ -73,7 +73,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	bundle --version && \
 
 	# Cleanup YJIT install deps
-	sudo apt-get remove rustc && sudo apt-get autoremove
+	sudo apt-get remove rustc libstd-rust*
 
 ENV GEM_HOME /home/circleci/.rubygems
 ENV PATH $GEM_HOME/bin:$BUNDLE_PATH/gems/bin:$PATH
