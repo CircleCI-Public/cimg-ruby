@@ -6,7 +6,8 @@
 # specific reason to use a different one. This means January, April, July, or
 # October.
 
-FROM cimg/base:2023.01
+# NOTE: Ruby under 3.1 require OpenSSL >= 1.0.1, < 3.0.0, so use Ubuntu 20.04.
+FROM cimg/base:2023.01-20.04
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
@@ -72,7 +73,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	bundle --version && \
 
 	# Cleanup YJIT install deps
-	sudo apt-get remove rustc && sudo apt-get autoremove
+	sudo apt-get remove rustc libstd-rust*
 
 ENV GEM_HOME /home/circleci/.rubygems
 ENV PATH $GEM_HOME/bin:$BUNDLE_PATH/gems/bin:$PATH
