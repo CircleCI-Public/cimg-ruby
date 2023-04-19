@@ -50,6 +50,8 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		zlib1g-dev \
 		# YJIT dep
 		rustc \
+		# Build gems with Rust extensions dep
+		clang-14 \
 	&& \
 	# Skip installing gem docs
 	echo "gem: --no-document" > ~/.gemrc && \
