@@ -2,6 +2,8 @@ version: 2.1
 
 orbs:
   cimg: circleci/cimg@0.3.0
+  slack: circleci/slack@4.12.1
+  gh: circleci/github-cli@2.2.0
 
 parameters:
   cron:
@@ -28,6 +30,12 @@ workflows:
             branches:
               ignore:
                 - main
+          post-steps:
+            - slack/notify:
+                branch_pattern: release-v.+
+                event: pass
+                mentions: "@jalexchen"
+                template: basic_success_1
           context: cimg-publishing
       - cimg/build-and-deploy:
           name: "Deploy"
@@ -36,6 +44,12 @@ workflows:
             branches:
               only:
                 - main
+          post-steps:
+            - slack/notify:
+                branch_pattern: main
+                event: fail
+                mentions: "@images"
+                template: basic_fail_1
           context: cimg-publishing
 
 jobs:
@@ -72,6 +86,8 @@ jobs:
             git config --global gpg.format ssh
             git config --global commit.gpgsign true
             git submodule sync
+      - gh/setup:
+          token: IMAGE_BOT_TOKEN
       - run:
           name: Run version update script
           command: |
