@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  cimg: circleci/cimg@dev:63df6f8325c0d7b831d5f91e04865c739f5e9eaa
+  cimg: circleci/cimg@0.3.4
   slack: circleci/slack@4.12.1
   gh: circleci/github-cli@2.2.0
 
@@ -23,6 +23,7 @@ workflows:
     jobs:
       - cimg/build-and-deploy:
           name: "Staging"
+          resource-class: 2xlarge+
           docker-namespace: ccitest
           docker-repository: ruby
           publish-branch: test
@@ -39,6 +40,7 @@ workflows:
           context: cimg-publishing
       - cimg/build-and-deploy:
           name: "Deploy"
+          resource-class: 2xlarge+
           docker-repository: ruby
           filters:
             branches:
