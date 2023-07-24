@@ -23,7 +23,7 @@ workflows:
     jobs:
       - cimg/build-and-deploy:
           name: "Staging"
-          resource-class: 2xlarge+
+          resource-class: arm-2xlarge
           docker-namespace: ccitest
           docker-repository: ruby
           publish-branch: test
@@ -40,7 +40,7 @@ workflows:
           context: cimg-publishing
       - cimg/build-and-deploy:
           name: "Deploy"
-          resource-class: 2xlarge+
+          resource-class: arm-2xlarge
           docker-repository: ruby
           filters:
             branches:
