@@ -73,7 +73,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	cd ~/ruby && \
 	autoconf && \
 	./configure --enable-yjit --enable-shared --disable-install-doc && \
-	MAKEFLAGS="--jobs $(nproc)" make && \
+	make -j 30 && \
 	sudo make install && \
 	mkdir ~/.rubygems && \
 	sudo rm -rf ~/ruby /var/lib/apt/lists/* && \
