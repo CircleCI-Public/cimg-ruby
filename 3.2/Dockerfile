@@ -72,7 +72,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	curl -sSL $downloadURL | tar -xz -C ~/ruby --strip-components=1 && \
 	cd ~/ruby && \
 	autoconf && \
-	./configure --enable-yjit --enable-shared && \
+	./configure --enable-yjit --enable-shared --disable-install-doc && \
 	MAKEFLAGS="--jobs $(nproc)" make && \
 	sudo make install && \
 	mkdir ~/.rubygems && \
