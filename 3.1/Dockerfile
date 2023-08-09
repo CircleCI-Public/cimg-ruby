@@ -54,13 +54,18 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		clang-14 && \
 	# For Ruby 3.0 install OpenSSL 1.1.1v to make it work on Ubuntu 20.04
 	if [ "${RUBY_MAJOR}" == "3.0" ]; then \
-		[[ $(uname -m) == "x86_64" ]] && ARCH="amd64" || ARCH="arm64"; \
-		wget http://ports.ubuntu.com/pool/main/o/openssl/openssl_1.1.1f-1ubuntu2_${ARCH}.deb; \
-		wget http://ports.ubuntu.com/pool/main/o/openssl/libssl-dev_1.1.1f-1ubuntu2_${ARCH}.deb; \
-		wget http://ports.ubuntu.com/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_${ARCH}.deb; \
-		sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_${ARCH}.deb; \
-		sudo dpkg -i libssl-dev_1.1.1f-1ubuntu2_${ARCH}.deb; \
-		sudo dpkg -i openssl_1.1.1f-1ubuntu2_${ARCH}.deb; \
+		if [[ $(uname -m) == "x86_64" ]]; then \
+			wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/openssl_1.1.1f-1ubuntu2_amd64.deb; \
+			wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl-dev_1.1.1f-1ubuntu2_amd64.deb; \
+			wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb; \
+		else \
+			wget http://ports.ubuntu.com/pool/main/o/openssl/openssl_1.1.1f-1ubuntu2_arm64.deb; \
+			wget http://ports.ubuntu.com/pool/main/o/openssl/libssl-dev_1.1.1f-1ubuntu2_arm64.deb; \
+			wget http://ports.ubuntu.com/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_arm64.deb; \
+		fi && \
+		sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2*.deb; \
+		sudo dpkg -i libssl-dev_1.1.1f-1ubuntu2*.deb; \
+		sudo dpkg -i openssl_1.1.1f-1ubuntu2*.deb; \
 	fi && \
 	# Skip installing gem docs
 	echo "gem: --no-document" > ~/.gemrc && \
