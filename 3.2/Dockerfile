@@ -6,7 +6,6 @@
 # specific reason to use a different one. This means January, April, July, or
 # October.
 
-# NOTE: Ruby under 3.1 require OpenSSL >= 1.0.1, < 3.0.0, so use Ubuntu 20.04.
 FROM cimg/base:2023.07
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
@@ -53,17 +52,17 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		rustc \
     	# Build gems with Rust extensions dep
 		clang-14 && \
-	# For Ruby 3.0 install OpenSSL 1.1.1g to make it work on Ubuntu 20.04
+	# For Ruby 3.0 install OpenSSL 1.1.1v to make it work on Ubuntu 20.04
 	if [ "${RUBY_MAJOR}" == "3.0" ]; then \
-		wget https://www.openssl.org/source/openssl-1.1.1g.tar.gz; \
-		tar zxvf openssl-1.1.1g.tar.gz; \
-		cd openssl-1.1.1g; \
-		./config --prefix=$HOME/.openssl/openssl-1.1.1g --openssldir=$HOME/.openssl/openssl-1.1.1g; \
-		make && make test && make install; \
-		rm -rf ~/.openssl/openssl-1.1.1g/certs; \
-		ln -s /etc/ssl/certs ~/.openssl/openssl-1.1.1g/certs; \
-		cd .. && rm -rf openssl-1.1.1g; \
-		RUBY_CONFIGURE_OPTS=--with-openssl-dir=$HOME/.openssl/openssl-1.1.1g; \
+		wget https://www.openssl.org/source/openssl-1.1.1v.tar.gz; \
+		tar zxvf openssl-1.1.1v.tar.gz; \
+		cd openssl-1.1.1v; \
+		./config --prefix=$HOME/.openssl/openssl-1.1.1v --openssldir=$HOME/.openssl/openssl-1.1.1v; \
+		make -j "$(nproc)" && make test && make install; \
+		rm -rf ~/.openssl/openssl-1.1.1v/certs; \
+		ln -s /etc/ssl/certs ~/.openssl/openssl-1.1.1v/certs; \
+		cd .. && rm -rf openssl-1.1.1v; \
+		RUBY_CONFIGURE_OPTS=--with-openssl-dir=$HOME/.openssl/openssl-1.1.1v; \
 	fi && \
 	# Skip installing gem docs
 	echo "gem: --no-document" > ~/.gemrc && \
@@ -72,8 +71,8 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	curl -sSL $downloadURL | tar -xz -C ~/ruby --strip-components=1 && \
 	cd ~/ruby && \
 	autoconf && \
-	./configure --enable-yjit --enable-shared --disable-install-doc && \
-	make -j 30 && \
+	./configure --enable-yjit --enable-shared && \
+	make -j "$(nproc)" && \
 	sudo make install && \
 	mkdir ~/.rubygems && \
 	sudo rm -rf ~/ruby /var/lib/apt/lists/* && \
@@ -81,7 +80,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 
 	ruby --version && \
 	gem --version && \
-	sudo gem update --system && \
+	MAKEFLAGS=-j"$(nproc)" sudo gem update --system && \
 	gem --version && \
 	bundle --version && \
 
