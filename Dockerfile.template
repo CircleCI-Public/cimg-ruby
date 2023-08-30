@@ -66,6 +66,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2*.deb; \
 		sudo dpkg -i libssl-dev_1.1.1f-1ubuntu2*.deb; \
 		sudo dpkg -i openssl_1.1.1f-1ubuntu2*.deb; \
+		rm -f *.deb
 	fi && \
 	# Skip installing gem docs
 	echo "gem: --no-document" > ~/.gemrc && \
