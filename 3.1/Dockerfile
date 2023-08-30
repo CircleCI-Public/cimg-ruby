@@ -6,7 +6,7 @@
 # specific reason to use a different one. This means January, April, July, or
 # October.
 
-FROM cimg/base:2023.01
+FROM cimg/base:2023.07
 
 LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
@@ -50,7 +50,23 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		zlib1g-dev \
 		# YJIT dep
 		rustc \
-	&& \
+    	# Build gems with Rust extensions dep
+		clang-14 && \
+	# For Ruby 3.0 install OpenSSL 1.1.1 to make it work on Ubuntu 20.04
+	if [ "${RUBY_MAJOR}" == "3.0" ]; then \
+		if [[ $(uname -m) == "x86_64" ]]; then \
+			wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/openssl_1.1.1f-1ubuntu2_amd64.deb; \
+			wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl-dev_1.1.1f-1ubuntu2_amd64.deb; \
+			wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb; \
+		else \
+			wget http://ports.ubuntu.com/pool/main/o/openssl/openssl_1.1.1f-1ubuntu2_arm64.deb; \
+			wget http://ports.ubuntu.com/pool/main/o/openssl/libssl-dev_1.1.1f-1ubuntu2_arm64.deb; \
+			wget http://ports.ubuntu.com/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_arm64.deb; \
+		fi && \
+		sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2*.deb; \
+		sudo dpkg -i libssl-dev_1.1.1f-1ubuntu2*.deb; \
+		sudo dpkg -i openssl_1.1.1f-1ubuntu2*.deb; \
+	fi && \
 	# Skip installing gem docs
 	echo "gem: --no-document" > ~/.gemrc && \
 	mkdir -p ~/ruby && \
@@ -58,7 +74,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	curl -sSL $downloadURL | tar -xz -C ~/ruby --strip-components=1 && \
 	cd ~/ruby && \
 	autoconf && \
-	./configure --enable-yjit --enable-shared && \
+	./configure --enable-yjit --enable-shared --disable-install-doc && \
 	make -j "$(nproc)" && \
 	sudo make install && \
 	mkdir ~/.rubygems && \
@@ -67,7 +83,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 
 	ruby --version && \
 	gem --version && \
-	sudo gem update --system && \
+	MAKEFLAGS=-j"$(nproc)" sudo gem update --system && \
 	gem --version && \
 	bundle --version && \
 
