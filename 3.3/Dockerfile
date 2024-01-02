@@ -6,9 +6,9 @@
 # specific reason to use a different one. This means January, April, July, or
 # October.
 
-FROM cimg/base:2023.07
+FROM cimg/base:2024.01
 
-LABEL maintainer="CircleCI Execution Team <eng-execution@circleci.com>"
+LABEL maintainer="Community & Partner Engineering Team <community-partner@circleci.com>"
 
 ENV RUBY_VERSION=3.3.0 \
 	RUBY_MAJOR=3.3
