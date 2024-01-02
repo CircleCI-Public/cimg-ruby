@@ -77,7 +77,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	curl -sSL $downloadURL | tar -xz -C ~/ruby --strip-components=1 && \
 	cd ~/ruby && \
 	autoconf && \
-	./configure --with-jemalloc --enable-yjit --enable-shared --disable-install-doc && \
+	./configure --enable-yjit --enable-shared --disable-install-doc && \
 	make -j "$(nproc)" && \
 	sudo make install && \
 	mkdir ~/.rubygems && \
@@ -91,7 +91,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	bundle --version && \
 
 	# Cleanup YJIT install deps
-	sudo apt-get remove rustc libstd-rust* libjemalloc-dev
+	sudo apt-get remove rustc libstd-rust*
 
 ENV GEM_HOME /home/circleci/.rubygems
 ENV PATH $GEM_HOME/bin:$BUNDLE_PATH/gems/bin:$PATH
