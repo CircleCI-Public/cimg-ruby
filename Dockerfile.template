@@ -6,7 +6,7 @@
 # specific reason to use a different one. This means January, April, July, or
 # October.
 
-FROM joinswoop/%%PARENT%%:2024.01
+FROM cimg/%%PARENT%%:2024.01
 
 LABEL maintainer="CircleCI Execution Team <eng-execution@circleci.com>"
 
@@ -55,7 +55,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
     	# Build gems with Rust extensions dep
 		clang-14 && \
 	# For Ruby 3.0 install OpenSSL 1.1.1 to make it work on Ubuntu 20.04
-	if [ "${RUBY_MAJOR}" == "3.2" ]; then \
+	if [ "${RUBY_MAJOR}" == "3.0" ]; then \
 		if [[ $(uname -m) == "x86_64" ]]; then \
 			wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/openssl_1.1.1f-1ubuntu2_amd64.deb; \
 			wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl-dev_1.1.1f-1ubuntu2_amd64.deb; \
