@@ -54,8 +54,8 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		libjemalloc-dev \
     	# Build gems with Rust extensions dep
 		clang-14 && \
-	# For Ruby 3.0 install OpenSSL 1.1.1 to make it work on Ubuntu 20.04
-	if [ "${RUBY_MAJOR}" == "3.2" ]; then \
+	# For Ruby 3.2 or 3.3 install OpenSSL 1.1.1 to make it work on Ubuntu 20.04
+	if [ "${RUBY_MAJOR}" == "3.2" ] || [ "${RUBY_MAJOR}" == "3.3" ]; then \
 		if [[ $(uname -m) == "x86_64" ]]; then \
 			wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/openssl_1.1.1f-1ubuntu2_amd64.deb; \
 			wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl-dev_1.1.1f-1ubuntu2_amd64.deb; \
