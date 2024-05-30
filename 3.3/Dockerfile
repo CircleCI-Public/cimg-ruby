@@ -10,7 +10,7 @@ FROM cimg/base:2024.02
 
 LABEL maintainer="CircleCI Execution Team <eng-execution@circleci.com>"
 
-ENV RUBY_VERSION=3.3.1 \
+ENV RUBY_VERSION=3.3.2 \
 	RUBY_MAJOR=3.3
 
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
