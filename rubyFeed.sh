@@ -11,7 +11,7 @@ fi
 
 getRubyVersion() {
   RSS_URL="https://github.com/ruby/ruby/tags.atom"
-  VERSIONS=$(curl --silent "$RSS_URL" | grep -E '(title)' | tail -n +2 | sed -e 's/^[ \t]*//' | sed -e 's/<title>//' -e 's/<\/title>//')
+  VERSIONS=$(curl --silent "$RSS_URL" | grep -E '(title)' | tail -n +2 | sed -e 's/^[ \t]*//' | sed -e 's/<title>[v?]*//' -e 's/<\/title>//')
 
   for version in $VERSIONS; do
     if [[ $version =~ ^[0-9]+(\_[0-9]+)*$ || $version =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
