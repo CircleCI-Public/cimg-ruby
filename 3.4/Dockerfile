@@ -6,12 +6,12 @@
 # specific reason to use a different one. This means January, April, July, or
 # October.
 
-FROM cimg/%%PARENT%%:2024.12
+FROM cimg/base:2024.12
 
 LABEL maintainer="CircleCI Execution Team <eng-execution@circleci.com>"
 
-ENV RUBY_VERSION=%%VERSION_FULL%% \
-	RUBY_MAJOR=%%VERSION_MINOR%%
+ENV RUBY_VERSION=3.4.1 \
+	RUBY_MAJOR=3.4
 
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		autoconf \
