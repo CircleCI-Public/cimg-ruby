@@ -131,7 +131,7 @@ It would look something like this:
 git clone --recurse-submodules <my-clone-url>
 ```
 
-If you missed this step and already cloned, you can just run `git submodule update --recursive` to populate the submodule.
+If you missed this step and already cloned, you can just run `git submodule update --init --recursive` to populate the submodule.
 Then you can optionally add this repo as an upstream to your own:
 
 ```bash
