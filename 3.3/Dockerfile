@@ -10,7 +10,7 @@ FROM cimg/base:2024.02
 
 LABEL maintainer="CircleCI Execution Team <eng-execution@circleci.com>"
 
-ENV RUBY_VERSION=3.3.6 \
+ENV RUBY_VERSION=3.3.7 \
 	RUBY_MAJOR=3.3
 
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
@@ -83,15 +83,14 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	mkdir ~/.rubygems && \
 	sudo rm -rf ~/ruby /var/lib/apt/lists/* && \
 	cd && \
-
+	# Check that installs succeeded
 	ruby --version && \
 	gem --version && \
 	MAKEFLAGS=-j"$(nproc)" sudo gem update --system && \
 	gem --version && \
 	bundle --version && \
-
 	# Cleanup YJIT install deps
 	sudo apt-get remove rustc libstd-rust*
 
-ENV GEM_HOME /home/circleci/.rubygems
-ENV PATH $GEM_HOME/bin:$BUNDLE_PATH/gems/bin:$PATH
+ENV GEM_HOME=/home/circleci/.rubygems
+ENV PATH=$GEM_HOME/bin:$BUNDLE_PATH/gems/bin:$PATH
