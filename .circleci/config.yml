@@ -8,6 +8,24 @@ parameters:
   cron:
     type: boolean
     default: false
+jobs:
+  temp-browser:
+    executor:
+      name: cimg/default
+      resource-class: 2xlarge+
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: |
+          if [[ -n "$DOCKER_TOKEN" ]]; then
+            echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin
+          else
+            echo "WARNING: No docker token set, skipping docker login"
+          fi
+          docker run --privileged multiarch/qemu-user-static:latest --reset -p yes --credential yes
+          echo 'export DOCKER_PASS=$DOCKER_TOKEN' >> "$BASH_ENV"
+          chmod +x ./build-images.sh
+          ./build-images.sh
 
 workflows:
   automated-wf:
@@ -19,6 +37,17 @@ workflows:
             - slack-notification-access-token
             - slack-cimg-notifications
             - cpe-image-bot-github-creds
+  temp-browser-fixes:
+    jobs:
+      - temp-browser:
+          filters:
+            branches:
+              only:
+                - feat/browser-fix-keys
+          context: 
+            - slack-notification-access-token
+            - slack-cimg-notifications
+            - cimg-docker-image-building
   main-wf:
     when:
       not: << pipeline.parameters.cron >>
@@ -32,6 +61,7 @@ workflows:
             branches:
               ignore:
                 - main
+                - feat/browser-fix-keys
           context: 
             - slack-notification-access-token
             - slack-cimg-notifications
