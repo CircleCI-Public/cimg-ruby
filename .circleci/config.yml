@@ -12,7 +12,7 @@ jobs:
   temp-browser:
     executor:
       name: cimg/default
-      resource-class: 2xlarge+
+      resource_class: 2xlarge+
     steps:
       - checkout
       - setup_remote_docker
