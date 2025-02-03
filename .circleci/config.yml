@@ -48,6 +48,7 @@ workflows:
             - slack-notification-access-token
             - slack-cimg-notifications
             - cimg-docker-image-building
+            - cimg-docker-image-publishing
   main-wf:
     when:
       not: << pipeline.parameters.cron >>
