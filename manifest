@@ -2,8 +2,8 @@
 
 repository=ruby
 parent=base
-base_version=2024.02
-new_version=2026.01
+base_version=2026.03-22.04
+new_version=2026.03
 new_tags=(4.0)
 variants=(node browsers)
 namespace=cimg
