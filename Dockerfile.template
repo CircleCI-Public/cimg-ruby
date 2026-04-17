@@ -35,6 +35,8 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		libsqlite3-dev \
 		libssl-dev \
 		# Rails dep
+		libvips \
+		# Rails dep
 		libxml2-dev \
 		libyaml-dev \
 		# Rails dep
