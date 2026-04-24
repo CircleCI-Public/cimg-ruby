@@ -10,7 +10,7 @@ FROM cimg/base:2026.03
 
 LABEL maintainer="CircleCI Execution Team <eng-execution@circleci.com>"
 
-ENV RUBY_VERSION=4.0.2 \
+ENV RUBY_VERSION=4.0.3 \
 	RUBY_MAJOR=4.0
 
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
@@ -34,6 +34,8 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		# Rails dep
 		libsqlite3-dev \
 		libssl-dev \
+		# Rails dep
+		libvips \
 		# Rails dep
 		libxml2-dev \
 		libyaml-dev \
