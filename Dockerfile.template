@@ -10,6 +10,7 @@ FROM cimg/%%PARENT%%:%%BASE_VERSION%%
 
 LABEL maintainer="CircleCI Execution Team <eng-execution@circleci.com>"
 
+ENV BUNDLE_PATH=$BUNDLE_PATH
 ENV RUBY_VERSION=%%VERSION_FULL%% \
 	RUBY_MAJOR=%%VERSION_MINOR%%
 
