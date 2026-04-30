@@ -89,7 +89,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	# Check that installs succeeded
 	ruby --version && \
 	gem --version && \
-	MAKEFLAGS=-j"$(( $(nproc) / 2 + 1 ))" sudo gem update --system && \
+	MAKEFLAGS=-j"$(nproc)" sudo gem update --system && \
 	gem --version && \
 	bundle --version && \
 	# Cleanup YJIT install deps
