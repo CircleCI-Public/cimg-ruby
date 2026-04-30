@@ -19,7 +19,11 @@ getRubyVersion() {
       generateSearchTerms "RUBY_VERSION=" "$majorMinor/Dockerfile" "\\"
       directoryCheck "$majorMinor" "$SEARCH_TERM"
       if [[ $(eval echo $?) == 0 ]]; then
-        generateVersionString "$newVersion"
+        if git ls-remote --exit-code --heads origin "release-v${newVersion}" > /dev/null 2>&1; then
+          echo "Branch release-v${newVersion} already exists on remote, skipping"
+        else
+          generateVersionString "$newVersion"
+        fi
       fi
     fi
   done
