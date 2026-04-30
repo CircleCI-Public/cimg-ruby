@@ -80,7 +80,8 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	cd ~/ruby && \
 	autoconf && \
 	./configure --enable-yjit --enable-shared --disable-install-doc && \
-	make -j "$(nproc)" && \
+	# Halve parallelism: full nproc causes OOM under QEMU arm64 emulation
+	make -j "$(( $(nproc) / 2 + 1 ))" && \
 	sudo make install && \
 	mkdir ~/.rubygems && \
 	sudo rm -rf ~/ruby /var/lib/apt/lists/* && \
@@ -88,7 +89,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	# Check that installs succeeded
 	ruby --version && \
 	gem --version && \
-	MAKEFLAGS=-j"$(nproc)" sudo gem update --system && \
+	MAKEFLAGS=-j"$(( $(nproc) / 2 + 1 ))" sudo gem update --system && \
 	gem --version && \
 	bundle --version && \
 	# Cleanup YJIT install deps
