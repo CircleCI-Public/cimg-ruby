@@ -14,7 +14,6 @@ ENV RUBY_VERSION=%%VERSION_FULL%% \
 	RUBY_MAJOR=%%VERSION_MINOR%%
 
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
-		autoconf \
 		bison \
 		dpkg-dev \
 		# Rails dep
@@ -78,7 +77,6 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	downloadURL="https://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOR}/ruby-$RUBY_VERSION.tar.gz" && \
 	curl -sSL $downloadURL | tar -xz -C ~/ruby --strip-components=1 && \
 	cd ~/ruby && \
-	autoconf && \
 	./configure --enable-yjit --enable-shared --disable-install-doc && \
 	# Halve parallelism: full nproc causes OOM under QEMU arm64 emulation
 	make -j "$(( $(nproc) / 2 + 1 ))" && \
