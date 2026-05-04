@@ -78,7 +78,12 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	curl -sSL $downloadURL | tar -xz -C ~/ruby --strip-components=1 && \
 	cd ~/ruby && \
 	autoconf && \
-	./configure --enable-yjit --enable-shared --disable-install-doc && \
+	# Force known-good values for probes that flake under QEMU arm64 emulation
+	./configure --enable-yjit --enable-shared --disable-install-doc \
+		ac_cv_header_sys_resource_h=yes \
+		ac_cv_header_sys_times_h=yes \
+		ac_cv_type_ssize_t=yes \
+		ac_cv_sizeof_ssize_t=8 && \
 	# Halve parallelism: full nproc causes OOM under QEMU arm64 emulation
 	make -j "$(( $(nproc) / 2 + 1 ))" && \
 	sudo make install && \
