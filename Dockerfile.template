@@ -84,8 +84,8 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		ac_cv_header_sys_times_h=yes \
 		ac_cv_type_ssize_t=yes \
 		ac_cv_sizeof_ssize_t=8 && \
-	# Halve parallelism: full nproc causes OOM under QEMU arm64 emulation
-	make -j "$(( $(nproc) / 2 + 1 ))" && \
+	# Cap parallelism: QEMU arm64 emulation segfaults with too many gcc jobs
+	make -j 4 && \
 	sudo make install && \
 	mkdir ~/.rubygems && \
 	sudo rm -rf ~/ruby /var/lib/apt/lists/* && \
