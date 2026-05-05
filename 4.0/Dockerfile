@@ -1,3 +1,4 @@
+# check=skip=UndefinedVar
 # vim:set ft=dockerfile:
 
 # Do not edit individual Dockerfiles manually. Instead, please make changes to the Dockerfile.template, which will be used by the build script to generate Dockerfiles.
@@ -98,4 +99,4 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	sudo apt-get remove rustc libstd-rust*
 
 ENV GEM_HOME=/home/circleci/.rubygems
-ENV PATH=$GEM_HOME/bin:$BUNDLE_PATH/gems/bin:$PATH
+ENV PATH=$GEM_HOME/bin:${BUNDLE_PATH:+$BUNDLE_PATH/bin:}$PATH
