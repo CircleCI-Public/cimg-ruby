@@ -1,3 +1,4 @@
+# check=skip=UndefinedVar
 # vim:set ft=dockerfile:
 
 # Do not edit individual Dockerfiles manually. Instead, please make changes to the Dockerfile.template, which will be used by the build script to generate Dockerfiles.
@@ -10,7 +11,7 @@ FROM cimg/base:2026.03
 
 LABEL maintainer="CircleCI Execution Team <eng-execution@circleci.com>"
 
-ENV RUBY_VERSION=4.0.2 \
+ENV RUBY_VERSION=4.0.3 \
 	RUBY_MAJOR=4.0
 
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
@@ -35,6 +36,8 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		libsqlite3-dev \
 		libssl-dev \
 		# Rails dep
+		libvips \
+		# Rails dep
 		libxml2-dev \
 		libyaml-dev \
 		# Rails dep
@@ -51,9 +54,7 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 		# YJIT dep
 		rustc \
 		# Jemalloc
-		libjemalloc-dev \
-    	# Build gems with Rust extensions dep
-		clang-14 && \
+		libjemalloc-dev && \
 	# For Ruby 3.0 install OpenSSL 1.1.1 to make it work on Ubuntu 20.04
 	if [ "${RUBY_MAJOR}" == "3.0" ]; then \
 		if [[ $(uname -m) == "x86_64" ]]; then \
@@ -77,7 +78,12 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	curl -sSL $downloadURL | tar -xz -C ~/ruby --strip-components=1 && \
 	cd ~/ruby && \
 	autoconf && \
-	./configure --enable-yjit --enable-shared --disable-install-doc && \
+	# Force known-good values for probes that flake under QEMU arm64 emulation
+	./configure --enable-yjit --enable-shared --disable-install-doc \
+		ac_cv_header_sys_resource_h=yes \
+		ac_cv_header_sys_times_h=yes \
+		ac_cv_type_ssize_t=yes \
+		ac_cv_sizeof_ssize_t=8 && \
 	make -j "$(nproc)" && \
 	sudo make install && \
 	mkdir ~/.rubygems && \
@@ -93,4 +99,4 @@ RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
 	sudo apt-get remove rustc libstd-rust*
 
 ENV GEM_HOME=/home/circleci/.rubygems
-ENV PATH=$GEM_HOME/bin:$BUNDLE_PATH/gems/bin:$PATH
+ENV PATH=$GEM_HOME/bin:${BUNDLE_PATH:+$BUNDLE_PATH/bin:}$PATH

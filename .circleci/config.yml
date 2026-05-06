@@ -1,8 +1,8 @@
 version: 2.1
 
 orbs:
-  cimg: circleci/cimg@0.6.4
-  slack: circleci/slack@4.12.1
+  cimg: circleci/cimg@0.6.5
+  slack: circleci/slack@4.13.3
 
 parameters:
   cron:
@@ -23,16 +23,13 @@ workflows:
     when:
       not: << pipeline.parameters.cron >>
     jobs:
-      - cimg/build-and-deploy:
+      - build_and_deploy:
           name: "Test"
-          resource-class: 2xlarge+
-          docker-namespace: ccitest
-          docker-repository: ruby
           filters:
             branches:
               ignore:
                 - main
-          context: 
+          context:
             - slack-notification-access-token
             - slack-cimg-notifications
             - cimg-docker-image-building
@@ -42,10 +39,8 @@ workflows:
                 event: fail
                 mentions: "@images"
                 template: basic_fail_1
-      - cimg/build-and-deploy:
+      - build_and_deploy:
           name: "Deploy"
-          resource-class: 2xlarge+
-          docker-repository: ruby
           filters:
             branches:
               only:
@@ -61,3 +56,60 @@ workflows:
                 event: fail
                 mentions: "@images"
                 template: basic_fail_1
+
+jobs:
+  build_and_deploy:
+    machine:
+      image: ubuntu-2404:current
+    resource_class: 2xlarge+
+    steps:
+      - run:
+          name: Install latest QEMU
+          command: sudo apt-get update && sudo apt-get install qemu-system
+      - run:
+          name: Register binfmt for supported platforms
+          command: docker run --privileged --rm tonistiigi/binfmt --install all
+      - checkout
+      - run:
+          name: Docker login
+          command: echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_USER" --password-stdin
+      - when:
+          condition:
+            not:
+              equal: [ main, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: "Build and deploy to ccitest/ruby"
+                command: |
+                  DOCKER_NAMESPACE="ccitest"
+                  source ./manifest
+
+                  while IFS= read -r line; do
+
+                  if [[ $arm64 == "1" ]]; then
+                    directory=$(echo "$line" | awk '{print $6}')
+                  else
+                    directory=$(echo "$line" | awk '{print $4}')
+                  fi
+                  if [[ "${directory}" =~ "Dockerfile" ]]; then
+                    if [ "${parent:?}" != "base" ]; then
+                      sed -i "s|cimg/${repository:?}|${DOCKER_NAMESPACE}/${repository}|g" "$directory"
+                      sed -i "s|cimg/${parent}|${DOCKER_NAMESPACE}/${parent}|g" "$directory"
+                    else
+                      sed -i "s|cimg/$repository|${DOCKER_NAMESPACE}/${repository}|g" "$directory"
+                    fi
+                  fi
+
+                  done < ./build-images.sh
+
+                  sed 's|cimg|'"${DOCKER_NAMESPACE}"'|g' ./build-images.sh > ./build-images-stage.sh
+
+                  chmod +x ./build-images-stage.sh
+                  ./build-images-stage.sh
+      - when:
+          condition:
+            equal: [ main, << pipeline.git.branch >> ]
+          steps:
+            - run:
+                name: "Build and deploy to cimg/ruby"
+                command: ./build-images.sh
