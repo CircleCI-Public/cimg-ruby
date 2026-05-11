@@ -16,7 +16,7 @@ getRubyVersion() {
   for version in $VERSIONS; do
     if [[ $version =~ ^[0-9]+(\_[0-9]+)*$ || $version =~ ^[0-9]+(\.[0-9]+)*$ ]]; then
       generateVersions "$(echo "$version" | trimmer "v" | sed -r 's/_/./g')"
-      generateSearchTerms "RUBY_VERSION=" "$majorMinor/Dockerfile" "\\"
+      generateSearchTerms "RUBY_VERSION=" "$majorMinor/Dockerfile" "\\\\"
       directoryCheck "$majorMinor" "$SEARCH_TERM"
       if [[ $(eval echo $?) == 0 ]]; then
         if git ls-remote --exit-code --heads origin "release-v${newVersion}" > /dev/null 2>&1; then
