@@ -14,6 +14,7 @@ workflows:
     when: << pipeline.parameters.cron >>
     jobs:
       - cimg/update:
+          resource_class: small.gen2
           update-script: rubyFeed.sh
           context:
             - slack-notification-access-token
@@ -61,7 +62,7 @@ jobs:
   build_and_deploy:
     machine:
       image: ubuntu-2404:current
-    resource_class: 2xlarge+
+    resource_class: 2xlarge+.gen2
     steps:
       - run:
           name: Install latest QEMU
