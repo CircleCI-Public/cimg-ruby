@@ -7,11 +7,11 @@
 # specific reason to use a different one. This means January, April, July, or
 # October.
 
-FROM cimg/base:2026.03-22.04
+FROM cimg/base:2026.10-22.04
 
 LABEL maintainer="CircleCI Execution Team <eng-execution@circleci.com>"
 
-ENV RUBY_VERSION=3.3.12 \
+ENV RUBY_VERSION=3.3.13 \
 	RUBY_MAJOR=3.3
 
 RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends \
